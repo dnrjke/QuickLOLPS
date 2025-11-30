@@ -163,7 +163,7 @@ namespace LolpsWidget.Views
         /// </summary>
         private void PerformSearch()
         {
-            string query = SearchTextBox.Text?.Trim();
+            string query = SearchTextBox.Text?.Trim() ?? string.Empty;
 
             if (string.IsNullOrEmpty(query))
             {

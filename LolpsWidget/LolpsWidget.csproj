@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
-    <ApplicationIcon>Resources\Icons\app.ico</ApplicationIcon>
+    <!-- <ApplicationIcon>Resources\Icons\app.ico</ApplicationIcon> -->
     <AssemblyName>LolpsWidget</AssemblyName>
     <RootNamespace>LolpsWidget</RootNamespace>
     <LangVersion>latest</LangVersion>
