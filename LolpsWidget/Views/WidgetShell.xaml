@@ -1,0 +1,83 @@
+<Window x:Class="LolpsWidget.Views.WidgetShell"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Lol.ps Widget"
+        Width="60" Height="60"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False">
+
+    <Grid>
+        <!-- 축소 아이콘 상태 -->
+        <Border x:Name="CollapsedIcon"
+                Background="{StaticResource SemiTransparentDarkBrush}"
+                CornerRadius="30"
+                BorderBrush="{StaticResource AccentOrangeBrush}"
+                BorderThickness="2"
+                Cursor="Hand"
+                MouseLeftButtonDown="IconButton_MouseLeftButtonDown"
+                MouseLeftButtonUp="IconButton_MouseLeftButtonUp">
+            <TextBlock Text="L"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource AccentOrangeBrush}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+
+        <!-- 확장된 컨텐츠 영역 (초기에는 숨김) -->
+        <Border x:Name="ExpandedContent"
+                Background="{StaticResource SemiTransparentDarkBrush}"
+                CornerRadius="8"
+                BorderBrush="{StaticResource AccentOrangeBrush}"
+                BorderThickness="1"
+                Visibility="Collapsed">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 상단 검색 영역 -->
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="SearchTextBox"
+                             Grid.Column="0"
+                             Style="{StaticResource SearchTextBox}"
+                             Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                             KeyDown="SearchTextBox_KeyDown"/>
+
+                    <Button Grid.Column="1"
+                            Style="{StaticResource PrimaryButton}"
+                            Content="검색"
+                            Margin="5,0,0,0"
+                            Click="SearchButton_Click"/>
+                </Grid>
+
+                <!-- 탭 컨트롤 및 WebView2 영역 -->
+                <TabControl Grid.Row="1"
+                            Background="Transparent"
+                            BorderThickness="0">
+                    <TabItem Header="챔피언 탐색">
+                        <!-- ChampionBrowser 컨트롤이 여기에 들어감 -->
+                        <ContentControl Content="{Binding ChampionBrowserViewModel}"/>
+                    </TabItem>
+                    <TabItem Header="검색 결과">
+                        <!-- WebView2 컨트롤이 여기에 들어감 -->
+                        <Grid x:Name="WebViewContainer"/>
+                    </TabItem>
+                </TabControl>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
