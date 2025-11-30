@@ -12,16 +12,16 @@ namespace LolpsWidget.Views
     public partial class WidgetShell : Window
     {
         private bool _isExpanded = false;
-        private Point _dragOffset;
         private Point _mouseDownPosition;
+        private Point _initialWindowPosition;
         private bool _isDragging = false;
         private bool _hasMoved = false;
 
         private const double CollapsedWidth = 60;
         private const double CollapsedHeight = 60;
         private const double ExpandedWidth = 900;
-        private const double ExpandedHeight = 520;
-        private const double DragThreshold = 10; // 드래그로 판단할 최소 이동 거리 (10픽셀로 증가)
+        private const double ExpandedHeight = 700;
+        private const double DragThreshold = 5; // 드래그로 판단할 최소 이동 거리
 
         public WidgetShell()
         {
@@ -86,106 +86,83 @@ namespace LolpsWidget.Views
         }
 
         /// <summary>
-        /// 아이콘 클릭 이벤트 - 확장 토글 (드래그 기능 비활성화)
+        /// 아이콘 마우스 다운 이벤트 - 드래그 시작 또는 클릭 준비
         /// </summary>
         private void IconButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // 간단한 클릭 토글
             if (!_isExpanded)
             {
-                ExpandWithAnimation();
-            }
+                _mouseDownPosition = e.GetPosition(this);
+                _initialWindowPosition = new Point(this.Left, this.Top);
+                _isDragging = false;
+                _hasMoved = false;
 
-            e.Handled = true;
+                // 마우스 캡처 (드래그 추적을 위해)
+                ((UIElement)sender).CaptureMouse();
+                e.Handled = true;
+            }
         }
 
         /// <summary>
-        /// 마우스 왼쪽 버튼 업 이벤트 처리 (현재 미사용)
+        /// 아이콘 마우스 업 이벤트 - 클릭이면 확장, 드래그면 이동 완료
         /// </summary>
         private void IconButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            // 현재는 Down에서 처리하므로 비워둠
-            e.Handled = true;
+            if (!_isExpanded)
+            {
+                // 마우스 캡처 해제
+                ((UIElement)sender).ReleaseMouseCapture();
+
+                // 드래그가 아니었을 때만 확장 (클릭으로 간주)
+                if (!_isDragging && !_hasMoved)
+                {
+                    ExpandWithAnimation();
+                }
+                // 드래그가 끝났으면 화면 경계 내 유지
+                else if (_isDragging)
+                {
+                    EnsureWithinScreenBounds();
+                }
+
+                // 플래그 초기화
+                _isDragging = false;
+                _hasMoved = false;
+
+                e.Handled = true;
+            }
         }
 
-        // ============================================================
-        // 드래그 기능 주석처리 (테스트용)
-        // ============================================================
-        ///// <summary>
-        ///// 마우스 왼쪽 버튼 다운 이벤트 처리 (드래그 시작)
-        ///// </summary>
-        //private void IconButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    _mouseDownPosition = e.GetPosition(this);
-        //    _dragOffset = _mouseDownPosition;
-        //    _isDragging = false;
-        //    _hasMoved = false;
-        //
-        //    // 마우스 캡처 (드래그 추적을 위해)
-        //    ((UIElement)sender).CaptureMouse();
-        //    e.Handled = true;
-        //}
-        //
-        ///// <summary>
-        ///// 마우스 왼쪽 버튼 업 이벤트 처리 (토글 실행)
-        ///// </summary>
-        //private void IconButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        //{
-        //    // 마우스 캡처 해제
-        //    ((UIElement)sender).ReleaseMouseCapture();
-        //
-        //    // 드래그가 아니었을 때만 토글 (클릭으로 간주)
-        //    if (!_hasMoved || !_isDragging)
-        //    {
-        //        // 토글: 축소 -> 확장
-        //        if (!_isExpanded)
-        //        {
-        //            ExpandWithAnimation();
-        //        }
-        //    }
-        //
-        //    // 플래그 초기화
-        //    _isDragging = false;
-        //    _hasMoved = false;
-        //
-        //    // 화면 경계 내 유지
-        //    EnsureWithinScreenBounds();
-        //
-        //    e.Handled = true;
-        //}
+        /// <summary>
+        /// 마우스 이동 이벤트 처리 (드래그 이동)
+        /// </summary>
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
 
-        ///// <summary>
-        ///// 마우스 이동 이벤트 처리 (드래그 이동) - 주석처리 (테스트용)
-        ///// </summary>
-        //protected override void OnMouseMove(MouseEventArgs e)
-        //{
-        //    base.OnMouseMove(e);
-        //
-        //    // 마우스 왼쪽 버튼이 눌려있고, CollapsedIcon이 마우스를 캡처했을 때
-        //    if (e.LeftButton == MouseButtonState.Pressed && CollapsedIcon.IsMouseCaptured)
-        //    {
-        //        var currentPos = e.GetPosition(this);
-        //        var distance = Math.Sqrt(
-        //            Math.Pow(currentPos.X - _mouseDownPosition.X, 2) +
-        //            Math.Pow(currentPos.Y - _mouseDownPosition.Y, 2)
-        //        );
-        //
-        //        // 조금이라도 움직였는지 표시
-        //        if (distance > 0.5)
-        //        {
-        //            _hasMoved = true;
-        //        }
-        //
-        //        // 일정 거리 이상 움직이면 드래그로 간주하고 위치 이동
-        //        if (distance > DragThreshold)
-        //        {
-        //            _isDragging = true;
-        //            var screenPos = PointToScreen(currentPos);
-        //            this.Left = screenPos.X - _dragOffset.X;
-        //            this.Top = screenPos.Y - _dragOffset.Y;
-        //        }
-        //    }
-        //}
+            // 마우스 왼쪽 버튼이 눌려있고, CollapsedIcon이 마우스를 캡처했을 때
+            if (!_isExpanded && e.LeftButton == MouseButtonState.Pressed && CollapsedIcon.IsMouseCaptured)
+            {
+                var currentPos = e.GetPosition(this);
+                var deltaX = currentPos.X - _mouseDownPosition.X;
+                var deltaY = currentPos.Y - _mouseDownPosition.Y;
+                var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+                // 조금이라도 움직였는지 표시
+                if (distance > 0.5)
+                {
+                    _hasMoved = true;
+                }
+
+                // 일정 거리 이상 움직이면 드래그로 간주하고 위치 이동
+                if (distance > DragThreshold)
+                {
+                    _isDragging = true;
+                    // 초기 윈도우 위치에서 마우스 이동량만큼 이동
+                    this.Left = _initialWindowPosition.X + deltaX;
+                    this.Top = _initialWindowPosition.Y + deltaY;
+                }
+            }
+        }
 
         /// <summary>
         /// 화면 경계 내에 위젯이 위치하도록 보정
@@ -212,6 +189,7 @@ namespace LolpsWidget.Views
             if (_isExpanded)
             {
                 _mouseDownPosition = e.GetPosition(this);
+                _initialWindowPosition = new Point(this.Left, this.Top);
                 _hasMoved = false;
                 _isDragging = false;
                 ((UIElement)sender).CaptureMouse();
@@ -226,10 +204,9 @@ namespace LolpsWidget.Views
             if (_isExpanded && e.LeftButton == MouseButtonState.Pressed && ((UIElement)sender).IsMouseCaptured)
             {
                 var currentPos = e.GetPosition(this);
-                var distance = Math.Sqrt(
-                    Math.Pow(currentPos.X - _mouseDownPosition.X, 2) +
-                    Math.Pow(currentPos.Y - _mouseDownPosition.Y, 2)
-                );
+                var deltaX = currentPos.X - _mouseDownPosition.X;
+                var deltaY = currentPos.Y - _mouseDownPosition.Y;
+                var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
 
                 // 조금이라도 움직였는지 표시
                 if (distance > 0.5)
@@ -241,11 +218,9 @@ namespace LolpsWidget.Views
                 if (distance > DragThreshold)
                 {
                     _isDragging = true;
-                    // DragMove() 사용하지 않고 수동으로 이동
-                    var screenPos = e.GetPosition(this);
-                    var windowPos = PointToScreen(screenPos);
-                    this.Left = windowPos.X - _mouseDownPosition.X;
-                    this.Top = windowPos.Y - _mouseDownPosition.Y;
+                    // 초기 윈도우 위치에서 마우스 이동량만큼 이동
+                    this.Left = _initialWindowPosition.X + deltaX;
+                    this.Top = _initialWindowPosition.Y + deltaY;
                 }
             }
         }
@@ -260,9 +235,14 @@ namespace LolpsWidget.Views
                 ((UIElement)sender).ReleaseMouseCapture();
 
                 // 드래그가 아니었으면 축소 (클릭으로 간주)
-                if (!_isDragging)
+                if (!_isDragging && !_hasMoved)
                 {
                     CollapseWithAnimation();
+                }
+                // 드래그가 끝났으면 화면 경계 내 유지
+                else if (_isDragging)
+                {
+                    EnsureWithinScreenBounds();
                 }
 
                 // 플래그 초기화
