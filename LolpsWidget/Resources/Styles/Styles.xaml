@@ -1,0 +1,71 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- lol.ps 톤 팔레트 색상 정의 -->
+    <Color x:Key="PrimaryDark">#1C1C1F</Color>
+    <Color x:Key="SecondaryDark">#28282C</Color>
+    <Color x:Key="AccentOrange">#F4A460</Color>
+    <Color x:Key="AccentYellow">#FFD700</Color>
+    <Color x:Key="TextPrimary">#FFFFFF</Color>
+    <Color x:Key="TextSecondary">#B0B0B0</Color>
+
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDark}"/>
+    <SolidColorBrush x:Key="SecondaryDarkBrush" Color="{StaticResource SecondaryDark}"/>
+    <SolidColorBrush x:Key="AccentOrangeBrush" Color="{StaticResource AccentOrange}"/>
+    <SolidColorBrush x:Key="AccentYellowBrush" Color="{StaticResource AccentYellow}"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}"/>
+
+    <!-- 반투명 배경 -->
+    <SolidColorBrush x:Key="SemiTransparentDarkBrush" Color="#CC1C1C1F" Opacity="0.95"/>
+
+    <!-- 기본 버튼 스타일 -->
+    <Style x:Key="PrimaryButton" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource AccentOrangeBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="15,8"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="4"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentYellowBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- 기본 TextBox 스타일 -->
+    <Style x:Key="SearchTextBox" TargetType="TextBox">
+        <Setter Property="Background" Value="{StaticResource SecondaryDarkBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="BorderBrush" Value="{StaticResource AccentOrangeBrush}"/>
+        <Setter Property="Padding" Value="10,8"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                        <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
