@@ -205,22 +205,70 @@ namespace LolpsWidget.Views
         }
 
         /// <summary>
-        /// 타이틀바 드래그 시작
+        /// 타이틀바 마우스 다운 - 드래그 시작 또는 클릭 준비
         /// </summary>
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (_isExpanded)
             {
-                this.DragMove();
+                _mouseDownPosition = e.GetPosition(this);
+                _hasMoved = false;
+                _isDragging = false;
+                ((UIElement)sender).CaptureMouse();
             }
         }
 
         /// <summary>
-        /// 축소 버튼 클릭 이벤트
+        /// 타이틀바 마우스 이동 - 드래그 처리
         /// </summary>
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        private void TitleBar_MouseMove(object sender, MouseEventArgs e)
         {
-            CollapseWithAnimation();
+            if (_isExpanded && e.LeftButton == MouseButtonState.Pressed && ((UIElement)sender).IsMouseCaptured)
+            {
+                var currentPos = e.GetPosition(this);
+                var distance = Math.Sqrt(
+                    Math.Pow(currentPos.X - _mouseDownPosition.X, 2) +
+                    Math.Pow(currentPos.Y - _mouseDownPosition.Y, 2)
+                );
+
+                // 조금이라도 움직였는지 표시
+                if (distance > 0.5)
+                {
+                    _hasMoved = true;
+                }
+
+                // 일정 거리 이상 움직이면 드래그로 간주하고 창 이동
+                if (distance > DragThreshold)
+                {
+                    _isDragging = true;
+                    // DragMove() 사용하지 않고 수동으로 이동
+                    var screenPos = e.GetPosition(this);
+                    var windowPos = PointToScreen(screenPos);
+                    this.Left = windowPos.X - _mouseDownPosition.X;
+                    this.Top = windowPos.Y - _mouseDownPosition.Y;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 타이틀바 마우스 업 - 클릭이면 축소, 드래그면 이동 완료
+        /// </summary>
+        private void TitleBar_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_isExpanded)
+            {
+                ((UIElement)sender).ReleaseMouseCapture();
+
+                // 드래그가 아니었으면 축소 (클릭으로 간주)
+                if (!_isDragging)
+                {
+                    CollapseWithAnimation();
+                }
+
+                // 플래그 초기화
+                _isDragging = false;
+                _hasMoved = false;
+            }
         }
 
         /// <summary>
