@@ -86,80 +86,106 @@ namespace LolpsWidget.Views
         }
 
         /// <summary>
-        /// 마우스 왼쪽 버튼 다운 이벤트 처리 (드래그 시작)
+        /// 아이콘 클릭 이벤트 - 확장 토글 (드래그 기능 비활성화)
         /// </summary>
         private void IconButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _mouseDownPosition = e.GetPosition(this);
-            _dragOffset = _mouseDownPosition;
-            _isDragging = false;
-            _hasMoved = false;
+            // 간단한 클릭 토글
+            if (!_isExpanded)
+            {
+                ExpandWithAnimation();
+            }
 
-            // 마우스 캡처 (드래그 추적을 위해)
-            ((UIElement)sender).CaptureMouse();
             e.Handled = true;
         }
 
         /// <summary>
-        /// 마우스 왼쪽 버튼 업 이벤트 처리 (토글 실행)
+        /// 마우스 왼쪽 버튼 업 이벤트 처리 (현재 미사용)
         /// </summary>
         private void IconButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            // 마우스 캡처 해제
-            ((UIElement)sender).ReleaseMouseCapture();
-
-            // 드래그가 아니었을 때만 토글 (클릭으로 간주)
-            if (!_hasMoved || !_isDragging)
-            {
-                // 토글: 축소 -> 확장
-                if (!_isExpanded)
-                {
-                    ExpandWithAnimation();
-                }
-            }
-
-            // 플래그 초기화
-            _isDragging = false;
-            _hasMoved = false;
-
-            // 화면 경계 내 유지
-            EnsureWithinScreenBounds();
-
+            // 현재는 Down에서 처리하므로 비워둠
             e.Handled = true;
         }
 
-        /// <summary>
-        /// 마우스 이동 이벤트 처리 (드래그 이동)
-        /// </summary>
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
+        // ============================================================
+        // 드래그 기능 주석처리 (테스트용)
+        // ============================================================
+        ///// <summary>
+        ///// 마우스 왼쪽 버튼 다운 이벤트 처리 (드래그 시작)
+        ///// </summary>
+        //private void IconButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    _mouseDownPosition = e.GetPosition(this);
+        //    _dragOffset = _mouseDownPosition;
+        //    _isDragging = false;
+        //    _hasMoved = false;
+        //
+        //    // 마우스 캡처 (드래그 추적을 위해)
+        //    ((UIElement)sender).CaptureMouse();
+        //    e.Handled = true;
+        //}
+        //
+        ///// <summary>
+        ///// 마우스 왼쪽 버튼 업 이벤트 처리 (토글 실행)
+        ///// </summary>
+        //private void IconButton_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        //{
+        //    // 마우스 캡처 해제
+        //    ((UIElement)sender).ReleaseMouseCapture();
+        //
+        //    // 드래그가 아니었을 때만 토글 (클릭으로 간주)
+        //    if (!_hasMoved || !_isDragging)
+        //    {
+        //        // 토글: 축소 -> 확장
+        //        if (!_isExpanded)
+        //        {
+        //            ExpandWithAnimation();
+        //        }
+        //    }
+        //
+        //    // 플래그 초기화
+        //    _isDragging = false;
+        //    _hasMoved = false;
+        //
+        //    // 화면 경계 내 유지
+        //    EnsureWithinScreenBounds();
+        //
+        //    e.Handled = true;
+        //}
 
-            // 마우스 왼쪽 버튼이 눌려있고, CollapsedIcon이 마우스를 캡처했을 때
-            if (e.LeftButton == MouseButtonState.Pressed && CollapsedIcon.IsMouseCaptured)
-            {
-                var currentPos = e.GetPosition(this);
-                var distance = Math.Sqrt(
-                    Math.Pow(currentPos.X - _mouseDownPosition.X, 2) +
-                    Math.Pow(currentPos.Y - _mouseDownPosition.Y, 2)
-                );
-
-                // 조금이라도 움직였는지 표시
-                if (distance > 0.5)
-                {
-                    _hasMoved = true;
-                }
-
-                // 일정 거리 이상 움직이면 드래그로 간주하고 위치 이동
-                if (distance > DragThreshold)
-                {
-                    _isDragging = true;
-                    var screenPos = PointToScreen(currentPos);
-                    this.Left = screenPos.X - _dragOffset.X;
-                    this.Top = screenPos.Y - _dragOffset.Y;
-                }
-            }
-        }
+        ///// <summary>
+        ///// 마우스 이동 이벤트 처리 (드래그 이동) - 주석처리 (테스트용)
+        ///// </summary>
+        //protected override void OnMouseMove(MouseEventArgs e)
+        //{
+        //    base.OnMouseMove(e);
+        //
+        //    // 마우스 왼쪽 버튼이 눌려있고, CollapsedIcon이 마우스를 캡처했을 때
+        //    if (e.LeftButton == MouseButtonState.Pressed && CollapsedIcon.IsMouseCaptured)
+        //    {
+        //        var currentPos = e.GetPosition(this);
+        //        var distance = Math.Sqrt(
+        //            Math.Pow(currentPos.X - _mouseDownPosition.X, 2) +
+        //            Math.Pow(currentPos.Y - _mouseDownPosition.Y, 2)
+        //        );
+        //
+        //        // 조금이라도 움직였는지 표시
+        //        if (distance > 0.5)
+        //        {
+        //            _hasMoved = true;
+        //        }
+        //
+        //        // 일정 거리 이상 움직이면 드래그로 간주하고 위치 이동
+        //        if (distance > DragThreshold)
+        //        {
+        //            _isDragging = true;
+        //            var screenPos = PointToScreen(currentPos);
+        //            this.Left = screenPos.X - _dragOffset.X;
+        //            this.Top = screenPos.Y - _dragOffset.Y;
+        //        }
+        //    }
+        //}
 
         /// <summary>
         /// 화면 경계 내에 위젯이 위치하도록 보정
