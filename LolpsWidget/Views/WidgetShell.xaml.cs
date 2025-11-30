@@ -13,11 +13,14 @@ namespace LolpsWidget.Views
     {
         private bool _isExpanded = false;
         private Point _dragOffset;
+        private Point _mouseDownPosition;
+        private bool _isDragging = false;
 
         private const double CollapsedWidth = 60;
         private const double CollapsedHeight = 60;
         private const double ExpandedWidth = 900;
         private const double ExpandedHeight = 520;
+        private const double DragThreshold = 5; // 드래그로 판단할 최소 이동 거리
 
         public WidgetShell()
         {
@@ -86,7 +89,9 @@ namespace LolpsWidget.Views
         /// </summary>
         private void IconButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            _dragOffset = e.GetPosition(this);
+            _mouseDownPosition = e.GetPosition(this);
+            _dragOffset = _mouseDownPosition;
+            _isDragging = false;
             this.CaptureMouse();
         }
 
@@ -97,11 +102,17 @@ namespace LolpsWidget.Views
         {
             this.ReleaseMouseCapture();
 
-            // 토글: 축소 -> 확장, 확장 -> 축소
-            if (!_isExpanded)
-                ExpandWithAnimation();
-            else
-                CollapseWithAnimation();
+            // 드래그가 아니었을 때만 토글 (클릭으로 간주)
+            if (!_isDragging)
+            {
+                // 토글: 축소 -> 확장, 확장 -> 축소
+                if (!_isExpanded)
+                    ExpandWithAnimation();
+                else
+                    CollapseWithAnimation();
+            }
+
+            _isDragging = false;
 
             // 화면 경계 내 유지
             EnsureWithinScreenBounds();
@@ -116,9 +127,20 @@ namespace LolpsWidget.Views
 
             if (e.LeftButton == MouseButtonState.Pressed && this.IsMouseCaptured)
             {
-                var screenPos = PointToScreen(e.GetPosition(this));
-                this.Left = screenPos.X - _dragOffset.X;
-                this.Top = screenPos.Y - _dragOffset.Y;
+                var currentPos = e.GetPosition(this);
+                var distance = Math.Sqrt(
+                    Math.Pow(currentPos.X - _mouseDownPosition.X, 2) +
+                    Math.Pow(currentPos.Y - _mouseDownPosition.Y, 2)
+                );
+
+                // 일정 거리 이상 움직이면 드래그로 간주
+                if (distance > DragThreshold)
+                {
+                    _isDragging = true;
+                    var screenPos = PointToScreen(currentPos);
+                    this.Left = screenPos.X - _dragOffset.X;
+                    this.Top = screenPos.Y - _dragOffset.Y;
+                }
             }
         }
 
@@ -137,6 +159,25 @@ namespace LolpsWidget.Views
                 this.Left = wa.Right - this.Width;
             if (this.Top + this.Height > wa.Bottom)
                 this.Top = wa.Bottom - this.Height;
+        }
+
+        /// <summary>
+        /// 타이틀바 드래그 시작
+        /// </summary>
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_isExpanded)
+            {
+                this.DragMove();
+            }
+        }
+
+        /// <summary>
+        /// 축소 버튼 클릭 이벤트
+        /// </summary>
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            CollapseWithAnimation();
         }
 
         /// <summary>

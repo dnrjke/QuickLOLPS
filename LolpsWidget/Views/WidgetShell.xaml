@@ -41,11 +41,66 @@
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- 타이틀 바 (드래그 가능 + 축소 버튼) -->
+                <Grid Grid.Row="0"
+                      Background="Transparent"
+                      MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
+                      Margin="0,0,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="lol.ps 검색"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Cursor="Hand"/>
+
+                    <Button Grid.Column="1"
+                            Content="─"
+                            Width="30"
+                            Height="30"
+                            Background="Transparent"
+                            Foreground="{StaticResource TextPrimaryBrush}"
+                            BorderThickness="0"
+                            FontSize="16"
+                            FontWeight="Bold"
+                            Cursor="Hand"
+                            Click="MinimizeButton_Click"
+                            ToolTip="축소">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    CornerRadius="4">
+                                                <ContentPresenter HorizontalAlignment="Center"
+                                                                  VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource AccentOrangeBrush}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+
                 <!-- 상단 검색 영역 -->
-                <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid Grid.Row="1" Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -65,7 +120,7 @@
                 </Grid>
 
                 <!-- 탭 컨트롤 및 WebView2 영역 -->
-                <TabControl Grid.Row="1"
+                <TabControl Grid.Row="2"
                             Background="Transparent"
                             BorderThickness="0">
                     <TabItem Header="챔피언 탐색">
