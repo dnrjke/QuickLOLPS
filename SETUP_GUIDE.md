@@ -9,7 +9,7 @@ QuickLOLPS/
 ├── README.md                       # 프로젝트 소개
 ├── SETUP_GUIDE.md                  # 이 가이드 문서
 └── LolpsWidget/                    # 메인 프로젝트 디렉토리
-    ├── LolpsWidget.csproj          # 프로젝트 파일 (.NET 6)
+    ├── LolpsWidget.csproj          # 프로젝트 파일 (.NET 8 LTS)
     ├── App.xaml                    # 애플리케이션 진입점 (XAML)
     ├── App.xaml.cs                 # 애플리케이션 로직
     │
@@ -42,9 +42,11 @@ QuickLOLPS/
 
 ### 필수 요구사항
 - **운영체제**: Windows 10 1809 이상 / Windows 11 권장
-- **IDE**: Visual Studio 2022 이상
-- **.NET SDK**: .NET 6.0 SDK 이상
+- **IDE**: Visual Studio 2022 (17.8 이상)
+- **.NET SDK**: .NET 8.0 SDK (LTS - 2026년 11월까지 지원)
 - **WebView2 런타임**: Microsoft Edge WebView2 Runtime (이미 설치됨)
+
+> **참고**: .NET 6.0은 2024년 11월 12일부로 지원이 종료되었습니다. 이 프로젝트는 장기 지원이 보장되는 .NET 8.0 LTS를 사용합니다.
 
 ### 권장 사항
 - 듀얼 모니터 환경 (테스트용)
@@ -56,8 +58,8 @@ QuickLOLPS/
 
 | 패키지 | 버전 | 용도 |
 |--------|------|------|
-| `Microsoft.Web.WebView2` | 1.0.2210.55 | lol.ps 웹 페이지 렌더링 |
-| `CommunityToolkit.Mvvm` | 8.2.2 | MVVM 패턴 구현 (Source Generator) |
+| `Microsoft.Web.WebView2` | 1.0.2792.45 | lol.ps 웹 페이지 렌더링 |
+| `CommunityToolkit.Mvvm` | 8.3.2 | MVVM 패턴 구현 (Source Generator) |
 | `Newtonsoft.Json` | 13.0.3 | 설정 파일 저장/로드 |
 
 ## 🚀 빌드 및 실행 방법

@@ -41,11 +41,33 @@
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                <!-- 타이틀 바 (클릭: 축소, 드래그: 이동) -->
+                <Grid Grid.Row="0"
+                      Background="Transparent"
+                      MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
+                      MouseLeftButtonUp="TitleBar_MouseLeftButtonUp"
+                      MouseMove="TitleBar_MouseMove"
+                      Margin="0,0,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="lol.ps 검색 (클릭: 축소 / 드래그: 이동)"
+                               Foreground="{StaticResource TextPrimaryBrush}"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Cursor="Hand"/>
+                </Grid>
+
                 <!-- 상단 검색 영역 -->
-                <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid Grid.Row="1" Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -65,7 +87,7 @@
                 </Grid>
 
                 <!-- 탭 컨트롤 및 WebView2 영역 -->
-                <TabControl Grid.Row="1"
+                <TabControl Grid.Row="2"
                             Background="Transparent"
                             BorderThickness="0">
                     <TabItem Header="챔피언 탐색">
