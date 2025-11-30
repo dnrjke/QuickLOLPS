@@ -21,7 +21,9 @@
                 BorderBrush="{StaticResource AccentOrangeBrush}"
                 BorderThickness="2"
                 Cursor="Hand"
+                MouseDoubleClick="IconButton_MouseDoubleClick"
                 MouseLeftButtonDown="IconButton_MouseLeftButtonDown"
+                MouseMove="IconButton_MouseMove"
                 MouseLeftButtonUp="IconButton_MouseLeftButtonUp">
             <TextBlock Text="L"
                        FontSize="32"
@@ -45,19 +47,20 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- 타이틀 바 (클릭: 축소, 드래그: 이동) -->
+                <!-- 타이틀 바 (더블클릭: 축소, 드래그: 이동) -->
                 <Grid Grid.Row="0"
                       Background="Transparent"
+                      MouseDoubleClick="TitleBar_MouseDoubleClick"
                       MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
-                      MouseLeftButtonUp="TitleBar_MouseLeftButtonUp"
                       MouseMove="TitleBar_MouseMove"
+                      MouseLeftButtonUp="TitleBar_MouseLeftButtonUp"
                       Margin="0,0,0,5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
-                               Text="lol.ps 검색 (클릭: 축소 / 드래그: 이동)"
+                               Text="lol.ps 검색 (더블클릭: 축소 / 드래그: 이동)"
                                Foreground="{StaticResource TextPrimaryBrush}"
                                FontSize="12"
                                FontWeight="SemiBold"
