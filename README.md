@@ -12,15 +12,15 @@ Windows 10/11용 Always-On-Top 투명 데스크톱 위젯으로, lol.ps 닉네�
 
 ## 🛠️ 기술 스택
 
-- **C# WPF** (.NET 6)
+- **C# WPF** (.NET 8.0 LTS)
 - **WebView2** (Chromium 기반)
 - **MVVM 패턴** (CommunityToolkit.Mvvm)
 
 ## 📦 요구사항
 
 - Windows 10 1809+ / Windows 11
-- .NET 6.0 SDK
-- Visual Studio 2022
+- .NET 8.0 SDK (LTS - 2026년 11월까지 지원)
+- Visual Studio 2022 (17.8 이상)
 - WebView2 런타임
 
 ## 🚀 빌드 및 실행
