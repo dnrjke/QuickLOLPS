@@ -82,26 +82,23 @@ namespace LolpsWidget.Views
         }
 
         /// <summary>
-        /// 축소 상태 아이콘 더블클릭 - 확장
-        /// </summary>
-        private void IconButton_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (!_isExpanded)
-            {
-                ExpandWithAnimation();
-            }
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// 축소 상태 아이콘 드래그 시작
+        /// 축소 상태 아이콘 마우스 다운 - 더블클릭 확인 또는 드래그 시작
         /// </summary>
         private void IconButton_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!_isExpanded)
             {
-                _dragStartPosition = e.GetPosition(this);
-                ((UIElement)sender).CaptureMouse();
+                // 더블클릭 감지
+                if (e.ClickCount == 2)
+                {
+                    ExpandWithAnimation();
+                }
+                else
+                {
+                    // 단일 클릭: 드래그 준비
+                    _dragStartPosition = e.GetPosition(this);
+                    ((UIElement)sender).CaptureMouse();
+                }
             }
             e.Handled = true;
         }
@@ -151,26 +148,23 @@ namespace LolpsWidget.Views
         }
 
         /// <summary>
-        /// 확장 상태 타이틀바 더블클릭 - 축소
-        /// </summary>
-        private void TitleBar_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (_isExpanded)
-            {
-                CollapseWithAnimation();
-            }
-            e.Handled = true;
-        }
-
-        /// <summary>
-        /// 확장 상태 타이틀바 드래그 시작
+        /// 확장 상태 타이틀바 마우스 다운 - 더블클릭 확인 또는 드래그 시작
         /// </summary>
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (_isExpanded)
             {
-                _dragStartPosition = e.GetPosition(this);
-                ((UIElement)sender).CaptureMouse();
+                // 더블클릭 감지
+                if (e.ClickCount == 2)
+                {
+                    CollapseWithAnimation();
+                }
+                else
+                {
+                    // 단일 클릭: 드래그 준비
+                    _dragStartPosition = e.GetPosition(this);
+                    ((UIElement)sender).CaptureMouse();
+                }
             }
         }
 
